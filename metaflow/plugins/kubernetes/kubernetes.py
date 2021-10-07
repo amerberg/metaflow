@@ -146,6 +146,7 @@ class Kubernetes(object):
         memory=None,
         run_time_limit=None,
         env={},
+        tolerations=None,
     ):
 
         job = (
@@ -241,6 +242,7 @@ class Kubernetes(object):
             .annotation("metaflow/attempt", attempt)
             .label("app.kubernetes.io/name", "metaflow-task")
             .label("app.kubernetes.io/part-of", "metaflow")
+            .tolerations(tolerations)
         )
 
         return job.create()

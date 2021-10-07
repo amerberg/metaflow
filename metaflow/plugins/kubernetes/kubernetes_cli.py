@@ -9,6 +9,7 @@ from metaflow.exception import METAFLOW_EXIT_DISALLOW_RETRY, CommandException
 from metaflow.metadata.util import sync_local_metadata_from_datastore
 from metaflow.metaflow_config import DATASTORE_LOCAL_DIR
 from metaflow.mflog import TASK_LOG_SOURCE
+from metaflow.parameters import JSONTypeClass
 
 from .kubernetes import Kubernetes, KubernetesKilledException
 
@@ -84,6 +85,12 @@ def kubernetes():
     default=5 * 24 * 60 * 60,  # Default is set to 5 days
     help="Run time limit in seconds for Kubernetes pod.",
 )
+@click.option(
+    "--tolerations",
+    default=None,
+    type=JSONTypeClass(),
+    multiple=True,
+)
 @click.pass_context
 def step(
     ctx,
@@ -102,6 +109,7 @@ def step(
     gpu=None,
     gpu_vendor=None,
     run_time_limit=None,
+    tolerations=None,
     **kwargs
 ):
     def echo(msg, stream="stderr", job_id=None):
@@ -206,6 +214,7 @@ def step(
                 gpu_vendor=gpu_vendor,
                 run_time_limit=run_time_limit,
                 env=env,
+                tolerations=tolerations,
             )
     except Exception as e:
         traceback.print_exc(chain=False)
