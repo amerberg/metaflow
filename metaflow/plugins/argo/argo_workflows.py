@@ -880,6 +880,7 @@ class ArgoWorkflows(object):
                         )
                     }
                 )
+                .tolerations(resources.get("tolerations"))
                 # Set container
                 .container(
                     # TODO: Unify the logic with kubernetes.py
@@ -1232,6 +1233,13 @@ class Template(object):
         if "nodeSelector" not in self.payload:
             self.payload["labels"] = {}
         self.payload["nodeSelector"].update(node_selectors)
+        return self
+
+    def tolerations(self, tolerations):
+        if "tolerations" not in self.payload:
+            self.payload["tolerations"] = []
+        if tolerations is not None:
+            self.payload["tolerations"].extend(tolerations)
         return self
 
     def to_json(self):
